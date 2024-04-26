@@ -43,8 +43,8 @@ pipeline {
                     script {
                         sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
                         try {
-                            sh "docker stop react-app"
-                            sh "docker rm react-app"
+                            sh "docker stop react-app > /dev/null"
+                            sh "docker rm react-app 2> /dev/null"
                         } catch (err) {
                             echo: 'caught error: $err'
                         }
