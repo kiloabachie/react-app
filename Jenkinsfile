@@ -42,10 +42,10 @@ pipeline {
             steps {
                     script {
                         sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
-                        def doc_containers = sh(returnStdout: true, script: 'docker container ps -aq').replaceAll("\n", " ")
-                        if (doc_containers) {
-                                sh "docker stop ${doc_containers}"
-                                sh "docker rm ${doc_containers}"
+                     def container = sh(returnStdout: true, script: 'docker ps -a --format "{{.Names}}" | grep react-app')
+                        if (container) {
+                                sh "docker stop ${container}"
+                                sh "docker rm ${container}"
                             }
 
                         sh "docker run --restart always --name react-app -p 1233:80 -d kiloabachie/react-app:${env.BUILD_NUMBER}"
@@ -81,10 +81,10 @@ pipeline {
                  milestone(1)
                     script {
                         sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
-                         def doc_containers = sh(returnStdout: true, script: 'docker container ps -aq').replaceAll("\n", " ")
-                         if (doc_containers) {
-                           sh "docker stop ${doc_containers}"
-                           sh "docker rm ${doc_containers}"
+                        def container = sh(returnStdout: true, script: 'docker ps -a --format "{{.Names}}" | grep react-app')
+                         if (container) {
+                           sh "docker stop ${container}"
+                           sh "docker rm ${container}"
                          }
                         sh "docker run --restart always --name react-app -p 1233:80 -d kiloabachie/react-app:${env.BUILD_NUMBER}"
                     }
