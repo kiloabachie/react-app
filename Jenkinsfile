@@ -41,13 +41,20 @@ pipeline {
             }
             steps {
                     script {
-                        sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
-                        def doc_containers = sh(returnStdout: true, script: 'docker container ps -aq').replaceAll("\n", " ")
-                        if (doc_containers) {
-                                sh "docker stop ${doc_containers}"
-                                sh "docker rm ${doc_containers}"
-                            }
+                        
 
+// Pull the Docker image
+sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
+
+// Get IDs of all running containers
+            def doc_containers = sh(returnStdout: true, script: 'docker container ls -aq').trim()
+
+// Check if any containers are running
+            if (doc_containers) {
+    // Stop and remove all running containers
+                    sh "docker stop $doc_containers"
+                    sh "docker rm $doc_containers"
+}
                         sh "docker run --restart always --name react-app -p 1233:80 -d kiloabachie/react-app:${env.BUILD_NUMBER}"
                     }
             }
