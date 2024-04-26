@@ -42,13 +42,13 @@ pipeline {
             steps {
                     script {
                         sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
-                        try {
-                            sh "docker stop react-app > /dev/null"
-                            sh "docker rm react-app 2> /dev/null"
-                        } catch (err) {
-                            echo: 'caught error: $err'
-                        }
-                        sh "docker run --restart always --name react-app -p 1233:80 -d /react-app:${env.BUILD_NUMBER}"
+                        def doc_containers = sh(returnStdout: true, script: 'docker container ps -aq').replaceAll("\n", " ")
+                        if (doc_containers) {
+                                sh "docker stop ${doc_containers}"
+                                sh "docker rm ${doc_containers}"
+                            }
+
+                        sh "docker run --restart always --name react-app -p 1233:80 -d kiloabachie/react-app:${env.BUILD_NUMBER}"
                     }
             }
         }
