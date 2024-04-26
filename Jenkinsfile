@@ -88,12 +88,11 @@ sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
                  milestone(1)
                     script {
                         sh "docker pull kiloabachie/react-app:${env.BUILD_NUMBER}"
-                        try {
-                            sh "docker stop react-app"
-                            sh "docker rm react-app"
-                        } catch (err) {
-                            echo: 'caught error: $err'
-                        }
+                        def container = sh(returnStdout: true, script: 'docker ps -a --format "{{.Names}}" | grep react-app')
+                         if (container) {
+                           sh "docker stop ${container}"
+                           sh "docker rm ${container}"
+                         }
                         sh "docker run --restart always --name react-app -p 1233:80 -d kiloabachie/react-app:${env.BUILD_NUMBER}"
                     }
             }
